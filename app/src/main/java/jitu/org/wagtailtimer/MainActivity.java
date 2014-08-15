@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     public void onUpdateTimer(TimerChan timer) {
         TextView textClock = (TextView) findViewById(R.id.text_clock);
-        long elapsed = timer.getElapsed();
+        long elapsed = timer.getRest();
         String str = formatTime(elapsed);
         textClock.setText(str);
     }

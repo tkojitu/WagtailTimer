@@ -8,7 +8,9 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     private int state;
     private long startTime;
     private long prevTime;
-    private long duration = 100 * 1000;
+    private long initialDuration = 5 * 1000;
+    private long duration = initialDuration;
+    private long innerRest;
 
     public TimerChan(MainActivity activity) {
         this.activity = activity;
@@ -39,18 +41,22 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
     public void start() {
         startTime = prevTime = System.currentTimeMillis();
+        duration = initialDuration;
         beStarted();
         animator.start();
     }
 
     public void pause() {
         animator.cancel();
+        innerRest = getRest();
         bePaused();
     }
 
     public void restart() {
-        animator.start();
+        startTime = prevTime = System.currentTimeMillis();
+        duration = innerRest;
         beStarted();
+        animator.start();
     }
 
     public void reset() {
@@ -60,6 +66,7 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
         startTime = 0;
         state = 0;
         prevTime = 0;
+        duration = initialDuration;
         beIdle();
         notifyTimer();
     }
@@ -72,6 +79,9 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
             }
             prevTime += 1000;
         }
+        if (getRest() < 0) {
+            pause();
+        }
         notifyTimer();
     }
 
@@ -79,8 +89,17 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
         activity.onUpdateTimer(this);
     }
 
-    public long getElapsed() {
-        return  duration - (prevTime - startTime);
+    public long getRest() {
+        long result = duration - (prevTime - startTime);
+        return  (result < 0) ? 0 : result;
+    }
+
+    public boolean isIdle() {
+        return state == 0;
+    }
+
+    private void beIdle() {
+        state = 0;
     }
 
     public boolean isStarted() {
@@ -97,13 +116,5 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
 
     private void bePaused() {
         state = 2;
-    }
-
-    public boolean isIdle() {
-        return state == 0;
-    }
-
-    private void beIdle() {
-        state = 0;
     }
 }
