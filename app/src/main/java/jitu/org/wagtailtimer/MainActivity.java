@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends Activity implements ValueAnimator.AnimatorUpdateListener {
     private ValueAnimator animator;
@@ -21,6 +24,7 @@ public class MainActivity extends Activity implements ValueAnimator.AnimatorUpda
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loadMenuItems();
         animator = createAnimator();
     }
 
@@ -90,10 +94,31 @@ public class MainActivity extends Activity implements ValueAnimator.AnimatorUpda
         textClock.setText(str);
     }
 
+    private void loadMenuItems() {
+        ArrayList<HashMap<String, String>> data = getListItems();
+        SimpleAdapter adapter = new SimpleAdapter(this, data,
+                android.R.layout.simple_expandable_list_item_2,
+                new String[]{"title", "duration"},
+                new int[]{android.R.id.text1, android.R.id.text2});
+        ListView view = (ListView) findViewById(R.id.list_item);
+        view.setAdapter(adapter);
+    }
+
     private String formatTime(long sec) {
         long s = (sec / 1000) % 60;
         long m = (sec / 1000 / 60) % 60;
         long h = sec / 1000 / 60 / 60;
         return String.format("%02d:%02d:%02d", h, m, s);
+    }
+
+    public ArrayList<HashMap<String, String>> getListItems() {
+        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        for (TimerItem item : TimerItem.getSamples()) {
+            HashMap<String, String> datum = new HashMap<String, String>(2);
+            datum.put("title", item.getTitle());
+            datum.put("duration", formatTime(item.getDuration()));
+            data.add(datum);
+        }
+        return data;
     }
 }
