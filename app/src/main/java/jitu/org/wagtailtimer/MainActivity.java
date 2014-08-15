@@ -9,11 +9,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends Activity implements ValueAnimator.AnimatorUpdateListener {
+public class MainActivity extends Activity
+        implements ValueAnimator.AnimatorUpdateListener,
+                     View.OnLongClickListener {
     private ValueAnimator animator;
     private int timerState;
     private long startTime;
@@ -24,6 +27,9 @@ public class MainActivity extends Activity implements ValueAnimator.AnimatorUpda
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        View button = findViewById(R.id.button_start);
+        button.setOnLongClickListener(this);
+        updateTimer();
         loadMenuItems();
         animator = createAnimator();
     }
@@ -45,7 +51,9 @@ public class MainActivity extends Activity implements ValueAnimator.AnimatorUpda
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_reset) {
+            return true;
+        } else if (id == R.id.action_edit_menu) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -79,15 +87,19 @@ public class MainActivity extends Activity implements ValueAnimator.AnimatorUpda
 
     @Override
     public void onAnimationUpdate(ValueAnimator anim) {
-        updateClock();
+        checkUpdateTimer();
     }
 
-    private void updateClock() {
+    private void checkUpdateTimer() {
         long now = System.currentTimeMillis();
         if (now - prevTime < 1000) {
             return;
         }
         prevTime += 1000;
+        updateTimer();
+    }
+
+    private void updateTimer() {
         TextView textClock = (TextView) findViewById(R.id.text_clock);
         long elapsed = duration - (prevTime - startTime);
         String str = formatTime(elapsed);
@@ -120,5 +132,26 @@ public class MainActivity extends Activity implements ValueAnimator.AnimatorUpda
             data.add(datum);
         }
         return data;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        View button = findViewById(R.id.button_start);
+        if (v != button) {
+            return false;
+        }
+        resetTimer();
+        return true;
+    }
+
+    private void resetTimer() {
+        if (timerState != 0) {
+            pauseTimer();
+        }
+        startTime = 0;
+        timerState = 0;
+        prevTime = 0;
+        timerState = 0;
+        updateTimer();
     }
 }
