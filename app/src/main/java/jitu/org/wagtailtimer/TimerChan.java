@@ -99,7 +99,7 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
 
     private void beIdle() {
-        state = 0;
+        setState(0);
     }
 
     public boolean isStarted() {
@@ -107,7 +107,7 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
 
     private void beStarted() {
-        state = 1;
+        setState(1);
     }
 
     public boolean isPaused() {
@@ -115,6 +115,15 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
 
     private void bePaused() {
-        state = 2;
+        setState(2);
+    }
+
+    private void setState(int value) {
+        state = value;
+        notifyTimerStateChanged();
+    }
+
+    public void notifyTimerStateChanged() {
+        activity.onTimerStateChanged(this);
     }
 }

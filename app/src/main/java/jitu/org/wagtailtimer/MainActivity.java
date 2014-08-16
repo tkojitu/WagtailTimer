@@ -61,7 +61,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     public void onClickMainButton(View view) {
         timer.onClickButton();
-        updateButtonTitle();
     }
 
     private void updateButtonTitle() {
@@ -80,6 +79,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         long elapsed = timer.getRest();
         String str = formatTime(elapsed);
         textClock.setText(str);
+    }
+
+    public void onTimerStateChanged(TimerChan timer) {
+        updateButtonTitle();
     }
 
     private String formatTime(long sec) {
