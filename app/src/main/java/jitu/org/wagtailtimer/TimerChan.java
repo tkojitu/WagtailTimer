@@ -8,12 +8,13 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     private int state;
     private long startTime;
     private long prevTime;
-    private long initialDuration = 5 * 1000;
-    private long duration = initialDuration;
+    private long initialDuration;
+    private long duration;
     private long innerRest;
 
-    public TimerChan(MainActivity activity) {
+    public TimerChan(MainActivity activity, long duration) {
         this.activity = activity;
+        this.initialDuration = this.duration = duration;
         animator = createAnimator();
     }
 
@@ -71,6 +72,12 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
         notifyTimer();
     }
 
+    public void stop() {
+        animator.cancel();
+        innerRest = 0;
+        beStopped();
+    }
+
     public void checkUpdate() {
         if (isStarted()) {
             long now = System.currentTimeMillis();
@@ -79,10 +86,10 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
             }
             prevTime += 1000;
         }
-        if (getRest() < 0) {
-            pause();
-        }
         notifyTimer();
+        if (getRest() <= 0 && !isStopped()) {
+            stop();
+        }
     }
 
     private void notifyTimer() {
@@ -116,6 +123,14 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
 
     private void bePaused() {
         setState(2);
+    }
+
+    public boolean isStopped() {
+        return state == 3;
+    }
+
+    private void beStopped() {
+        setState(3);
     }
 
     private void setState(int value) {

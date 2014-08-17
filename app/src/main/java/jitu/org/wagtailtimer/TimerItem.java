@@ -1,7 +1,6 @@
 package jitu.org.wagtailtimer;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TimerItem {
     private String title;
@@ -20,11 +19,11 @@ public class TimerItem {
         return duration;
     }
 
-    public static List<TimerItem> getSamples() {
-        List results = new ArrayList();
-        results.add(new TimerItem("Squat 1st", 1000 * 60));
-        results.add(new TimerItem("Rest", 1000 * 30));
-        results.add(new TimerItem("Squat 2nd", 1000 * 60));
+    public static ArrayList<TimerItem> getSamples() {
+        ArrayList results = new ArrayList();
+        results.add(new TimerItem("Squat 1st", 1000 * 5));
+        results.add(new TimerItem("Rest", 1000 * 3));
+        results.add(new TimerItem("Squat 2nd", 1000 * 5));
         return results;
     }
 }
