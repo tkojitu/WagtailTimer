@@ -8,5 +8,7 @@
     <string name="restart">Restart</string>
     <string name="reset_menu">Reset Menu</string>
     <string name="open">Open…</string>
+    <string name="oi_open_title">Select a file to open.</string>
+    <string name="missing_file_manager">Missing External File Manager</string>
 
 </resources>
