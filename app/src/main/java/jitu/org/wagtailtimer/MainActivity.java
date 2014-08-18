@@ -3,6 +3,8 @@ package jitu.org.wagtailtimer;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +31,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     private TimerChan timer;
     private ArrayList<TimerItem> items = new ArrayList<TimerItem>();
     private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+    private ToneGenerator generator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,8 +208,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         items.remove(0);
         showItems();
         if (items.isEmpty()) {
+            generator.startTone(ToneGenerator.TONE_SUP_ERROR, 3000);
             setMainButtonText(R.string.reset_menu);
         } else {
+            generator.startTone(ToneGenerator.TONE_CDMA_ALERT_AUTOREDIAL_LITE);
             timer = new TimerChan(this, items.get(0).getDuration());
             timer.start();
         }
