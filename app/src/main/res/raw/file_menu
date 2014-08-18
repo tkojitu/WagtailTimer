@@ -1,0 +1,13 @@
+# This is a comment.
+# Empty lines are ignored, too.
+# Titles must be one line. Titles are optional.
+# Time format is hh:mm:ss. Time is required.
+
+Squat 1st
+00:00:05
+
+Rest
+00:00:03
+
+Squat 2nd
+00:00:05

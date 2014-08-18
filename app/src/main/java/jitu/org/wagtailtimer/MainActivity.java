@@ -3,6 +3,7 @@ package jitu.org.wagtailtimer;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +42,17 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         setContentView(R.layout.activity_main);
         View button = findViewById(R.id.button_start);
         button.setOnLongClickListener(this);
+        loadLastMenu();
+    }
+
+    private void loadLastMenu() {
+        try {
+            InputStream is = getResources().openRawResource(R.raw.file_menu);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            items = parseMenuReader(reader);
+            showItems();
+        } catch (Resources.NotFoundException e) {
+        }
     }
 
     @Override
@@ -110,42 +124,47 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(path));
-            TimerItem item = new TimerItem();
-            String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    if (line.trim().isEmpty()) {
-                        continue;
-                    }
-                    if (line.charAt(0) == '#') {
-                        continue;
-                    }
-                    try {
-                        Date date = format.parse(line);
-                        long h = date.getHours() * 60 * 60;
-                        long m = date.getMinutes() * 60;
-                        long s = date.getSeconds();
-                        item.setDuration((h + m + s) * 1000);
-                        results.add(item);
-                        item = new TimerItem();
-                    } catch (ParseException e) {
-                        item.setTitle(line);
-                    }
-                }
-                return results;
-            } catch (IOException e) {
-                Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                return results;
-            } finally {
-                try {
-                    reader.close();
-                } catch (IOException ex) {
-                    Toast.makeText(this, ex.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
+            return parseMenuReader(reader);
         } catch (FileNotFoundException e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             return results;
+        }
+    }
+
+    private ArrayList<TimerItem> parseMenuReader(BufferedReader reader) {
+        ArrayList<TimerItem> results = new ArrayList<TimerItem>();
+        TimerItem item = new TimerItem();
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                if (line.charAt(0) == '#') {
+                    continue;
+                }
+                try {
+                    Date date = format.parse(line);
+                    long h = date.getHours() * 60 * 60;
+                    long m = date.getMinutes() * 60;
+                    long s = date.getSeconds();
+                    item.setDuration((h + m + s) * 1000);
+                    results.add(item);
+                    item = new TimerItem();
+                } catch (ParseException e) {
+                    item.setTitle(line);
+                }
+            }
+            return results;
+        } catch (IOException e) {
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            return results;
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+                Toast.makeText(this, ex.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -173,7 +192,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     public void onClickMainButton(View view) {
         if (timer == null || timer.isStopped()) {
-            onOpen();
+            loadLastMenu();
+            if (items.isEmpty()) {
+                Toast.makeText(this, "Missing last menu.", Toast.LENGTH_LONG).show();
+            }
         } else {
             timer.onClickButton();
         }
