@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         }
     }
 
-    public boolean showItems(ArrayList<TimerItem> items) {
+    public boolean showItems(ArrayList<ItemChan> items) {
         ArrayList<HashMap<String, String>> data = toItemMap(items);
         SimpleAdapter adapter = new SimpleAdapter(this, data,
                 android.R.layout.simple_expandable_list_item_2,
@@ -86,9 +86,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         return true;
     }
 
-    private ArrayList<HashMap<String, String>> toItemMap(ArrayList<TimerItem> items) {
+    private ArrayList<HashMap<String, String>> toItemMap(ArrayList<ItemChan> items) {
         ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-        for (TimerItem item : items) {
+        for (ItemChan item : items) {
             HashMap<String, String> datum = new HashMap<String, String>(2);
             datum.put("title", item.getTitle());
             datum.put("duration", item.getDurationString());

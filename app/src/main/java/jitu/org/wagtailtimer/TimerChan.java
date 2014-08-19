@@ -102,7 +102,7 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
 
     public String getRestString() {
-        return TimerItem.formatTime(getRest());
+        return ItemChan.formatTime(getRest());
     }
 
     public boolean isIdle() {

@@ -2,11 +2,11 @@ package jitu.org.wagtailtimer;
 
 import java.util.ArrayList;
 
-public class TimerItem {
+public class ItemChan {
     private String title;
     private long duration;
 
-    public TimerItem() {
+    public ItemChan() {
     }
 
     public String getTitle() {

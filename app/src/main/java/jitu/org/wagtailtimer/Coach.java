@@ -1,7 +1,6 @@
 package jitu.org.wagtailtimer;
 
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -23,7 +22,7 @@ public class Coach {
 
     private MainActivity activity;
     private TimerChan timer;
-    private ArrayList<TimerItem> items = new ArrayList<TimerItem>();
+    private ArrayList<ItemChan> items = new ArrayList<ItemChan>();
     private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 
     public Coach(MainActivity activity) {
@@ -45,9 +44,9 @@ public class Coach {
         }
     }
 
-    private ArrayList<TimerItem> parseMenuReader(BufferedReader reader) {
-        ArrayList<TimerItem> results = new ArrayList<TimerItem>();
-        TimerItem item = new TimerItem();
+    private ArrayList<ItemChan> parseMenuReader(BufferedReader reader) {
+        ArrayList<ItemChan> results = new ArrayList<ItemChan>();
+        ItemChan item = new ItemChan();
         String line;
         try {
             while ((line = reader.readLine()) != null) {
@@ -64,7 +63,7 @@ public class Coach {
                     long s = date.getSeconds();
                     item.setDuration((h + m + s) * 1000);
                     results.add(item);
-                    item = new TimerItem();
+                    item = new ItemChan();
                 } catch (ParseException e) {
                     item.setTitle(line);
                 }
@@ -82,7 +81,7 @@ public class Coach {
         }
     }
 
-    public ArrayList<TimerItem> loadMenu(String path) {
+    public ArrayList<ItemChan> loadMenu(String path) {
         items = parseMenuFile(path);
         if (!items.isEmpty()) {
             saveLastMenu();
@@ -94,8 +93,8 @@ public class Coach {
         return items;
     }
 
-    private ArrayList<TimerItem> parseMenuFile(String path) {
-        ArrayList<TimerItem> results = new ArrayList<TimerItem>();
+    private ArrayList<ItemChan> parseMenuFile(String path) {
+        ArrayList<ItemChan> results = new ArrayList<ItemChan>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             return parseMenuReader(reader);
@@ -110,7 +109,7 @@ public class Coach {
             FileOutputStream fos = activity.openFileOutput(FILE_LAST_MENU, Context.MODE_PRIVATE);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
             try {
-                for (TimerItem item : items) {
+                for (ItemChan item : items) {
                     writer.write(item.getTitle(), 0, item.getTitle().length());
                     writer.newLine();
                     String duration = item.getDurationString();
@@ -172,7 +171,7 @@ public class Coach {
         }
     }
 
-    public ArrayList<TimerItem> getItems() {
+    public ArrayList<ItemChan> getItems() {
         return items;
     }
 
