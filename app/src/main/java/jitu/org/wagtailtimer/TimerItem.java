@@ -9,11 +9,6 @@ public class TimerItem {
     public TimerItem() {
     }
 
-    public TimerItem(String title, long duration) {
-        this.title = title;
-        this.duration = duration;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -28,13 +23,5 @@ public class TimerItem {
 
     public void setDuration(long value) {
         duration = value;
-    }
-
-    public static ArrayList<TimerItem> getSamples() {
-        ArrayList results = new ArrayList();
-        results.add(new TimerItem("Squat 1st", 1000 * 5));
-        results.add(new TimerItem("Rest", 1000 * 3));
-        results.add(new TimerItem("Squat 2nd", 1000 * 5));
-        return results;
     }
 }

@@ -3,7 +3,6 @@ package jitu.org.wagtailtimer;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -17,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity implements View.OnLongClickListener {
     private static final int REQUEST_ACTION_GET_CONTENT = 11;
+    private static final String FILE_LAST_MENU = "last_menu.txt";
 
     private TimerChan timer;
     private ArrayList<TimerItem> items = new ArrayList<TimerItem>();
@@ -47,11 +50,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     private void loadLastMenu() {
         try {
-            InputStream is = getResources().openRawResource(R.raw.file_menu);
+            FileInputStream is = openFileInput(FILE_LAST_MENU);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             items = parseMenuReader(reader);
             showItems();
-        } catch (Resources.NotFoundException e) {
+        } catch (FileNotFoundException ignored) {
         }
     }
 
@@ -77,7 +80,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         try {
             startActivityForResult(intent, REQUEST_ACTION_GET_CONTENT);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, R.string.missing_file_manager, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
         return true;
     }
@@ -99,6 +102,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         if (!loadMenu(data)) {
             return;
         }
+        saveLastMenu();
         showItems();
         if (items.isEmpty()) {
             return;
@@ -106,11 +110,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         timer = new TimerChan(this, items.get(0).getDuration());
         timer.checkUpdate();
         setMainButtonText(R.string.start);
-    }
-
-    private void setMainButtonText(int id) {
-        Button button = (Button) findViewById(R.id.button_start);
-        button.setText(id);
     }
 
     private boolean loadMenu(Intent data) {
@@ -168,6 +167,33 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         }
     }
 
+    private void saveLastMenu() {
+        try {
+            FileOutputStream fos = openFileOutput(FILE_LAST_MENU, MODE_PRIVATE);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
+            try {
+                for (TimerItem item : items) {
+                    writer.write(item.getTitle(), 0, item.getTitle().length());
+                    writer.newLine();
+                    String duration = formatTime(item.getDuration());
+                    writer.write(duration, 0, duration.length());
+                    writer.newLine();
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            } finally {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     private boolean showItems() {
         ArrayList<HashMap<String, String>> data = getItemMap();
         SimpleAdapter adapter = new SimpleAdapter(this, data,
@@ -190,6 +216,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         return data;
     }
 
+    private void setMainButtonText(int id) {
+        Button button = (Button) findViewById(R.id.button_start);
+        button.setText(id);
+    }
+
     public void onClickMainButton(View view) {
         if (timer == null || timer.isStopped()) {
             loadLastMenu();
@@ -208,10 +239,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         textClock.setText(str);
     }
 
-    private String formatTime(long sec) {
-        long s = (sec / 1000) % 60;
-        long m = (sec / 1000 / 60) % 60;
-        long h = sec / 1000 / 60 / 60;
+    private String formatTime(long msec) {
+        long s = (msec / 1000) % 60;
+        long m = (msec / 1000 / 60) % 60;
+        long h = msec / 1000 / 60 / 60;
         return String.format("%02d:%02d:%02d", h, m, s);
     }
 
