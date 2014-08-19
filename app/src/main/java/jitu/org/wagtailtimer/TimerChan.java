@@ -3,7 +3,7 @@ package jitu.org.wagtailtimer;
 import android.animation.ValueAnimator;
 
 public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
-    private MainActivity activity;
+    private Coach coach;
     private ValueAnimator animator;
     private int state;
     private long startTime;
@@ -12,8 +12,8 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     private long duration;
     private long innerRest;
 
-    public TimerChan(MainActivity activity, long duration) {
-        this.activity = activity;
+    public TimerChan(Coach coach, long duration) {
+        this.coach = coach;
         this.initialDuration = this.duration = duration;
         animator = createAnimator();
     }
@@ -93,12 +93,16 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
 
     private void notifyTimer() {
-        activity.onUpdateTimer(this);
+        coach.onUpdateTimer(this);
     }
 
     public long getRest() {
         long result = duration - (prevTime - startTime);
         return  (result < 0) ? 0 : result;
+    }
+
+    public String getRestString() {
+        return TimerItem.formatTime(getRest());
     }
 
     public boolean isIdle() {
@@ -139,6 +143,6 @@ public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
     }
 
     public void notifyTimerStateChanged() {
-        activity.onTimerStateChanged(this);
+        coach.onTimerStateChanged(this);
     }
 }
