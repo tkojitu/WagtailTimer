@@ -27,12 +27,20 @@ public class MeganeChan {
         this.activity = activity;
     }
 
-    public ArrayList<ItemChan> loadLastMenu() {
+    public ArrayList<ItemChan> loadMenu(String path) {
         try {
-            FileInputStream is = activity.openFileInput(FILE_LAST_MENU);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            return parseMenuReader(reader);
-        } catch (FileNotFoundException ignored) {
+            BufferedReader reader;
+            if (path == null) {
+                FileInputStream is = activity.openFileInput(FILE_LAST_MENU);
+                reader = new BufferedReader(new InputStreamReader(is));
+            } else {
+                reader = new BufferedReader(new FileReader(path));
+            }
+            ArrayList<ItemChan> items = parseMenuReader(reader);
+            saveLastMenu(items);
+            return items;
+        } catch (FileNotFoundException e) {
+            Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             return new ArrayList<ItemChan>();
         }
     }
@@ -51,10 +59,8 @@ public class MeganeChan {
                 }
                 try {
                     Date date = format.parse(line);
-                    long h = date.getHours() * 60 * 60;
-                    long m = date.getMinutes() * 60;
-                    long s = date.getSeconds();
-                    item.setDuration((h + m + s) * 1000);
+                    long msec = dateToMsec(date);
+                    item.setDuration(msec);
                     results.add(item);
                     item = new ItemChan();
                 } catch (ParseException e) {
@@ -74,29 +80,23 @@ public class MeganeChan {
         }
     }
 
-    public ArrayList<ItemChan> loadMenu(String path) {
-        ArrayList<ItemChan> results = new ArrayList<ItemChan>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(path));
-            return parseMenuReader(reader);
-        } catch (FileNotFoundException e) {
-            Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            return results;
-        }
+    private long dateToMsec(Date date) {
+        long h = date.getHours() * 60 * 60;
+        long m = date.getMinutes() * 60;
+        long s = date.getSeconds();
+        return (h + m + s) * 1000;
     }
 
     public void saveLastMenu(ArrayList<ItemChan> items) {
+        if (items.isEmpty()) {
+            return;
+        }
         try {
             FileOutputStream fos = activity.openFileOutput(FILE_LAST_MENU, Context.MODE_PRIVATE);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
             try {
                 for (ItemChan item : items) {
-                    writer.write(item.getTitle(), 0, item.getTitle().length());
-                    writer.newLine();
-                    String duration = item.getDurationString();
-                    writer.write(duration, 0, duration.length());
-                    writer.newLine();
-                    writer.newLine();
+                    writeItem(writer, item);
                 }
             } catch (IOException e) {
                 Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
@@ -110,5 +110,14 @@ public class MeganeChan {
         } catch (FileNotFoundException e) {
             Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void writeItem(BufferedWriter writer, ItemChan item) throws IOException {
+        writer.write(item.getTitle(), 0, item.getTitle().length());
+        writer.newLine();
+        String duration = activity.formatTime(item.getDuration());
+        writer.write(duration, 0, duration.length());
+        writer.newLine();
+        writer.newLine();
     }
 }

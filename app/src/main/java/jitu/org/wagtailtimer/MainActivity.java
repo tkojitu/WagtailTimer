@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         View button = findViewById(R.id.button_start);
         button.setOnLongClickListener(this);
         coach = new Coach(this);
-        coach.loadLastMenu();
+        coach.onReset(null);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         case REQUEST_ACTION_GET_CONTENT:
             if (resultCode == RESULT_OK) {
                 String path = data.getData().getPath();
-                coach.loadMenu(path);
+                coach.onReset(path);
             }
             break;
         default:
@@ -91,30 +91,45 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         for (ItemChan item : items) {
             HashMap<String, String> datum = new HashMap<String, String>(2);
             datum.put("title", item.getTitle());
-            datum.put("duration", item.getDurationString());
+            datum.put("duration", formatTime(item.getDuration()));
             data.add(datum);
         }
         return data;
     }
 
-    public void setMainButtonText(int id) {
+    public void setTimerButtonText(int id) {
         Button button = (Button) findViewById(R.id.button_start);
         button.setText(id);
     }
 
-    public void onClickMainButton(View view) {
-        coach.onClickTimerButton();
+    public void onClickTimerButton(View view) {
+        coach.onClickTimerButton(((Button)view).getText());
     }
 
-    public void setClockText(String str) {
+    public void setClock(long time) {
+        String str = formatTime(time);
         TextView textClock = (TextView) findViewById(R.id.text_clock);
         textClock.setText(str);
     }
 
+    public String formatTime(long msec) {
+        long s = (msec / 1000) % 60;
+        if (msec % 1000 > 0) {
+            ++s;
+        }
+        long m = (msec / 1000 / 60) % 60;
+        long h = msec / 1000 / 60 / 60;
+        return String.format("%02d:%02d:%02d", h, m, s);
+    }
+
     @Override
     public boolean onLongClick(View v) {
-        coach.resetTimer();
+        coach.onReset(null);
         return true;
+    }
+
+    public String getResourceString(int id) {
+        return getString(id);
     }
 
     public void playSoundMenu() {

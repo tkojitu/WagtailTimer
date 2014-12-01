@@ -1,99 +1,106 @@
 package jitu.org.wagtailtimer;
 
-import android.widget.Toast;
 import java.util.ArrayList;
 
 public class Coach {
     private MainActivity activity;
-    private TimerChan timer;
-    private ArrayList<ItemChan> items = new ArrayList<ItemChan>();
     private MeganeChan megane;
+    private StateChan state = new StateChan(this);
+    private ArrayList<ItemChan> items = new ArrayList<ItemChan>();
+    private long startedTime;
 
     public Coach(MainActivity activity) {
         this.activity = activity;
         this.megane = new MeganeChan(activity);
+        new TimerChan(this);
     }
 
-    public void loadLastMenu() {
-        items = megane.loadLastMenu();
-        if (!items.isEmpty()) {
-            timer = new TimerChan(this, items.get(0).getDuration());
-            timer.checkUpdate();
-        }
-        activity.showItems(items);
-        activity.setMainButtonText(R.string.start);
-    }
-
-    public ArrayList<ItemChan> loadMenu(String path) {
+    public void loadMenu(String path) {
         items = megane.loadMenu(path);
-        if (!items.isEmpty()) {
-            megane.saveLastMenu(items);
-            timer = new TimerChan(this, items.get(0).getDuration());
-            timer.checkUpdate();
-        }
         activity.showItems(items);
-        activity.setMainButtonText(R.string.start);
-        return items;
+        activity.setTimerButtonText(R.string.start);
+        setClockTextInitial();
     }
 
-    public void onUpdateTimer(TimerChan timer) {
-        String rest = timer.getRestString();
-        activity.setClockText(rest);
+    private void setClockTextInitial() {
+        long duration = 0;
+        if (!items.isEmpty()) {
+            ItemChan item = items.get(0);
+            duration = item.getDuration();
+        }
+        activity.setClock(duration);
     }
 
-    public void onTimerStateChanged(TimerChan timer) {
-        if (timer.isStopped()) {
-            doNextItem();
-        } else {
-            updateButtonTitle(timer);
+    public boolean hasItems() {
+        return !items.isEmpty();
+    }
+
+    public void onClickTimerButton(CharSequence seq) {
+        String str = seq.toString();
+        if (activity.getResourceString(R.string.start).equals(str)) {
+            state.onStart();
+        } else if (activity.getResourceString(R.string.pause).equals(str)) {
+            state.onPause();
+        } else if (activity.getResourceString(R.string.restart).equals(str)) {
+            state.onRestart();
+        } else if (activity.getResourceString(R.string.reset_menu).equals(str)) {
+            state.onReset(null);
         }
     }
 
-    private void doNextItem() {
+    public void onReset(String path) {
+        state.onReset(path);
+    }
+
+    public void onTimer() {
+        state.onTimer();
+    }
+
+    public void  start() {
+        startedTime = System.currentTimeMillis();
+        activity.setTimerButtonText(R.string.pause);
+        activity.playSoundItem();
+    }
+
+    public void pause() {
         if (items.isEmpty()) {
             return;
         }
+        ItemChan item = items.get(0);
+        item.setDuration(item.getDuration() - (System.currentTimeMillis() - startedTime));
+        activity.setTimerButtonText(R.string.restart);
+    }
+
+    public void restart() {
+        startedTime = System.currentTimeMillis();
+        activity.setTimerButtonText(R.string.pause);
+    }
+
+    public void update() {
+        long elapsed = System.currentTimeMillis() - startedTime;
+        ItemChan item = items.get(0);
+        if (item.getDuration() < elapsed) {
+            nextItem();
+            return;
+        }
+        long rest = item.getDuration() - elapsed;
+        if (rest < 0) {
+            rest = 0;
+        }
+        activity.setClock(rest);
+    }
+
+    public void nextItem() {
         items.remove(0);
-        activity.showItems(items);
         if (items.isEmpty()) {
             activity.playSoundMenu();
-            activity.setMainButtonText(R.string.reset_menu);
+            activity.setTimerButtonText(R.string.reset_menu);
+            activity.setClock(0);
         } else {
+            startedTime = System.currentTimeMillis();
+            setClockTextInitial();
             activity.playSoundItem();
-            timer = new TimerChan(this, items.get(0).getDuration());
-            timer.start();
         }
-        timer.checkUpdate();
-    }
-
-    private void updateButtonTitle(TimerChan timer) {
-        if (timer.isIdle()) {
-            activity.setMainButtonText(R.string.start);
-        } else if (timer.isStarted()) {
-            activity.setMainButtonText(R.string.pause);
-        } else if (timer.isPaused()) {
-            activity.setMainButtonText(R.string.restart);
-        }
-    }
-
-    public ArrayList<ItemChan> getItems() {
-        return items;
-    }
-
-    public void onClickTimerButton() {
-        if (timer == null || timer.isStopped()) {
-            loadLastMenu();
-            if (getItems().isEmpty()) {
-                Toast.makeText(activity, "Missing last menu.", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            timer.onClickButton();
-        }
-    }
-    public void resetTimer() {
-        if (timer == null) {
-            return;
-        }
-        timer.reset();
+        activity.showItems(items);
     }
 }
