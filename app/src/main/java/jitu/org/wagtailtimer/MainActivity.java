@@ -3,8 +3,6 @@ package jitu.org.wagtailtimer;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +20,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     private static final int REQUEST_ACTION_GET_CONTENT = 11;
 
     private Coach coach;
-    private ToneGenerator generator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+    private boolean usingSpeech = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +43,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         switch (item.getItemId()) {
         case R.id.menu_open:
             return onOpen();
+        case R.id.menu_settings:
+            return onMenuSettings();
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -97,6 +97,10 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         return data;
     }
 
+    private boolean onMenuSettings() {
+        return true;
+    }
+
     public void setTimerButtonText(int id) {
         Button button = (Button) findViewById(R.id.button_start);
         button.setText(id);
@@ -132,11 +136,11 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         return getString(id);
     }
 
-    public void playSoundMenu() {
-        generator.startTone(ToneGenerator.TONE_SUP_ERROR, 3000);
+    public void onDestroy() {
+        coach.onDestroy();
     }
 
-    public void playSoundItem() {
-        generator.startTone(ToneGenerator.TONE_CDMA_ALERT_AUTOREDIAL_LITE);
+    public boolean usesSpeech() {
+        return usingSpeech;
     }
 }

@@ -5,14 +5,16 @@ import java.util.ArrayList;
 public class Coach {
     private MainActivity activity;
     private MeganeChan megane;
+    private MegahonChan megahon;
     private StateChan state = new StateChan(this);
+    private TimerChan timer = new TimerChan(this);
     private ArrayList<ItemChan> items = new ArrayList<ItemChan>();
     private long startedTime;
 
     public Coach(MainActivity activity) {
         this.activity = activity;
         this.megane = new MeganeChan(activity);
-        new TimerChan(this);
+        this.megahon = new MegahonChan(activity);
     }
 
     public void loadMenu(String path) {
@@ -53,13 +55,16 @@ public class Coach {
     }
 
     public void onTimer() {
+        if (state == null) {
+            return;
+        }
         state.onTimer();
     }
 
     public void  start() {
         startedTime = System.currentTimeMillis();
         activity.setTimerButtonText(R.string.pause);
-        activity.playSoundItem();
+        megahon.shoutStart(items.get(0));
     }
 
     public void pause() {
@@ -93,14 +98,19 @@ public class Coach {
     public void nextItem() {
         items.remove(0);
         if (items.isEmpty()) {
-            activity.playSoundMenu();
+            megahon.shoutFinish();
             activity.setTimerButtonText(R.string.reset_menu);
             activity.setClock(0);
         } else {
             startedTime = System.currentTimeMillis();
             setClockTextInitial();
-            activity.playSoundItem();
+            megahon.shoutStart(items.get(0));
         }
         activity.showItems(items);
+    }
+
+    public void onDestroy() {
+        timer.cancel();
+        megahon.shutdown();
     }
 }
