@@ -1,7 +1,7 @@
 package jitu.org.wagtailtimer;
 
 public class MenuItem {
-    private String title;
+    private String title = "";
     private long duration;
 
     public MenuItem() {
@@ -12,7 +12,11 @@ public class MenuItem {
     }
 
     public void setTitle(String value) {
-        title = value;
+        if (value == null) {
+            title = "";
+        } else {
+            title = value;
+        }
     }
 
     public long getDuration() {
