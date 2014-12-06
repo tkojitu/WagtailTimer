@@ -27,7 +27,7 @@ public class MeganeChan {
         this.activity = activity;
     }
 
-    public ArrayList<ItemChan> loadMenu(String path) {
+    public ArrayList<MenuItem> loadMenu(String path) {
         try {
             BufferedReader reader;
             if (path == null) {
@@ -36,18 +36,18 @@ public class MeganeChan {
             } else {
                 reader = new BufferedReader(new FileReader(path));
             }
-            ArrayList<ItemChan> items = parseMenuReader(reader);
+            ArrayList<MenuItem> items = parseMenuReader(reader);
             saveLastMenu(items);
             return items;
         } catch (FileNotFoundException e) {
             Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            return new ArrayList<ItemChan>();
+            return new ArrayList<MenuItem>();
         }
     }
 
-    private ArrayList<ItemChan> parseMenuReader(BufferedReader reader) {
-        ArrayList<ItemChan> results = new ArrayList<ItemChan>();
-        ItemChan item = new ItemChan();
+    private ArrayList<MenuItem> parseMenuReader(BufferedReader reader) {
+        ArrayList<MenuItem> results = new ArrayList<MenuItem>();
+        MenuItem item = new MenuItem();
         String line;
         try {
             while ((line = reader.readLine()) != null) {
@@ -62,7 +62,7 @@ public class MeganeChan {
                     long msec = dateToMsec(date);
                     item.setDuration(msec);
                     results.add(item);
-                    item = new ItemChan();
+                    item = new MenuItem();
                 } catch (ParseException e) {
                     item.setTitle(line);
                 }
@@ -87,7 +87,7 @@ public class MeganeChan {
         return (h + m + s) * 1000;
     }
 
-    public void saveLastMenu(ArrayList<ItemChan> items) {
+    public void saveLastMenu(ArrayList<MenuItem> items) {
         if (items.isEmpty()) {
             return;
         }
@@ -95,7 +95,7 @@ public class MeganeChan {
             FileOutputStream fos = activity.openFileOutput(FILE_LAST_MENU, Context.MODE_PRIVATE);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
             try {
-                for (ItemChan item : items) {
+                for (MenuItem item : items) {
                     writeItem(writer, item);
                 }
             } catch (IOException e) {
@@ -112,7 +112,7 @@ public class MeganeChan {
         }
     }
 
-    private void writeItem(BufferedWriter writer, ItemChan item) throws IOException {
+    private void writeItem(BufferedWriter writer, MenuItem item) throws IOException {
         writer.write(item.getTitle(), 0, item.getTitle().length());
         writer.newLine();
         String duration = activity.formatTime(item.getDuration());

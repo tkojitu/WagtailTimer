@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -39,7 +38,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_open:
             return onOpen();
@@ -75,7 +74,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         }
     }
 
-    public boolean showItems(ArrayList<ItemChan> items) {
+    public boolean showItems(ArrayList<MenuItem> items) {
         ArrayList<HashMap<String, String>> data = toItemMap(items);
         SimpleAdapter adapter = new SimpleAdapter(this, data,
                 android.R.layout.simple_expandable_list_item_2,
@@ -86,9 +85,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         return true;
     }
 
-    private ArrayList<HashMap<String, String>> toItemMap(ArrayList<ItemChan> items) {
+    private ArrayList<HashMap<String, String>> toItemMap(ArrayList<MenuItem> items) {
         ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-        for (ItemChan item : items) {
+        for (MenuItem item : items) {
             HashMap<String, String> datum = new HashMap<String, String>(2);
             datum.put("title", item.getTitle());
             datum.put("duration", formatTime(item.getDuration()));

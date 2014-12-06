@@ -1,10 +1,10 @@
 package jitu.org.wagtailtimer;
 
-public class ItemChan {
+public class MenuItem {
     private String title;
     private long duration;
 
-    public ItemChan() {
+    public MenuItem() {
     }
 
     public String getTitle() {

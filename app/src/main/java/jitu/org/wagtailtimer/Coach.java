@@ -7,8 +7,8 @@ public class Coach {
     private MeganeChan megane;
     private MegahonChan megahon;
     private StateChan state = new StateChan(this);
-    private TimerChan timer = new TimerChan(this);
-    private ArrayList<ItemChan> items = new ArrayList<ItemChan>();
+    private TokeiChan tokei = new TokeiChan(this);
+    private ArrayList<MenuItem> items = new ArrayList<MenuItem>();
     private long startedTime;
 
     public Coach(MainActivity activity) {
@@ -27,7 +27,7 @@ public class Coach {
     private void setClockTextInitial() {
         long duration = 0;
         if (!items.isEmpty()) {
-            ItemChan item = items.get(0);
+            MenuItem item = items.get(0);
             duration = item.getDuration();
         }
         activity.setClock(duration);
@@ -71,7 +71,7 @@ public class Coach {
         if (items.isEmpty()) {
             return;
         }
-        ItemChan item = items.get(0);
+        MenuItem item = items.get(0);
         item.setDuration(item.getDuration() - (System.currentTimeMillis() - startedTime));
         activity.setTimerButtonText(R.string.restart);
     }
@@ -83,7 +83,7 @@ public class Coach {
 
     public void update() {
         long elapsed = System.currentTimeMillis() - startedTime;
-        ItemChan item = items.get(0);
+        MenuItem item = items.get(0);
         if (item.getDuration() < elapsed) {
             nextItem();
             return;
@@ -110,7 +110,7 @@ public class Coach {
     }
 
     public void onDestroy() {
-        timer.cancel();
+        tokei.cancel();
         megahon.shutdown();
     }
 }

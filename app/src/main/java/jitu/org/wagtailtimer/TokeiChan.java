@@ -2,11 +2,11 @@ package jitu.org.wagtailtimer;
 
 import android.animation.ValueAnimator;
 
-public class TimerChan implements ValueAnimator.AnimatorUpdateListener {
+public class TokeiChan implements ValueAnimator.AnimatorUpdateListener {
     private Coach coach;
     private ValueAnimator animator;
 
-    public TimerChan(Coach coach) {
+    public TokeiChan(Coach coach) {
         this.coach = coach;
         createAnimator();
     }

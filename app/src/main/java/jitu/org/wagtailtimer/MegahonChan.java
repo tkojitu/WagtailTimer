@@ -41,7 +41,7 @@ public class MegahonChan implements TextToSpeech.OnInitListener {
         generator.startTone(ToneGenerator.TONE_SUP_ERROR, 3000);
     }
 
-    public void shoutStart(ItemChan item) {
+    public void shoutStart(MenuItem item) {
         if (activity.usesSpeech()) {
             shoutText(item.getTitle());
         } else {
