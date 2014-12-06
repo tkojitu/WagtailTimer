@@ -13,8 +13,11 @@ You can load a training menu. A training menu is written in a text file. You nee
 Sound
 -----
 
-When an item get finished, the timer rings a bell (using ToneGenerator).
+You can choose a sound type from Settings.
 
+* Voice (TextToSpeech)
+* Tone (ToneGenerator)
+* None
 
 License
 -------
