@@ -38,13 +38,18 @@ public class MegahonChan implements TextToSpeech.OnInitListener {
     }
 
     public void shoutFinish() {
+        String type = activity.getSoundType();
+        if (type.equals(activity.getString(R.string.none))) {
+            return;
+        }
         generator.startTone(ToneGenerator.TONE_SUP_ERROR, 3000);
     }
 
     public void shoutStart(MenuItem item) {
-        if (activity.usesSpeech()) {
+        String type = activity.getSoundType();
+        if (type.equals(activity.getString(R.string.voice))) {
             shoutText(item.getTitle());
-        } else {
+        } else if (type.equals(activity.getString(R.string.tone))) {
             generator.startTone(ToneGenerator.TONE_CDMA_ALERT_AUTOREDIAL_LITE);
         }
     }

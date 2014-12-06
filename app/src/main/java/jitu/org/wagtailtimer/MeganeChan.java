@@ -8,8 +8,8 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
@@ -29,20 +29,27 @@ public class MeganeChan {
 
     public ArrayList<MenuItem> loadMenu(String path) {
         try {
-            BufferedReader reader;
+            FileInputStream is;
             if (path == null) {
-                FileInputStream is = activity.openFileInput(FILE_LAST_MENU);
-                reader = new BufferedReader(new InputStreamReader(is));
+                is = activity.openFileInput(FILE_LAST_MENU);
             } else {
-                reader = new BufferedReader(new FileReader(path));
+                is = new FileInputStream(path);
             }
-            ArrayList<MenuItem> items = parseMenuReader(reader);
-            saveLastMenu(items);
-            return items;
+            return loadMenuFromStream(is);
         } catch (FileNotFoundException e) {
-            Toast.makeText(activity, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            return new ArrayList<MenuItem>();
+            return loadRawMenu();
         }
+    }
+
+    private ArrayList<MenuItem> loadMenuFromStream(InputStream is) {
+        BufferedReader reader;
+        reader = new BufferedReader(new InputStreamReader(is));
+        return parseMenuReader(reader);
+    }
+
+    private ArrayList<MenuItem> loadRawMenu() {
+        InputStream is = activity.getResources().openRawResource(R.raw.default_menu);
+        return loadMenuFromStream(is);
     }
 
     private ArrayList<MenuItem> parseMenuReader(BufferedReader reader) {

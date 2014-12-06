@@ -3,7 +3,9 @@ package jitu.org.wagtailtimer;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +21,6 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     private static final int REQUEST_ACTION_GET_CONTENT = 11;
 
     private Coach coach;
-    private boolean usingSpeech = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,8 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     private boolean onMenuSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
         return true;
     }
 
@@ -139,7 +142,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         coach.onDestroy();
     }
 
-    public boolean usesSpeech() {
-        return usingSpeech;
+    public String getSoundType() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String key = getString(R.string.key_sound_list);
+        return prefs.getString(key, "");
     }
 }
