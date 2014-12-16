@@ -36,7 +36,9 @@ public class MeganeChan {
                 is = new FileInputStream(path);
             }
             ArrayList<MenuItem> items = loadMenuFromStream(is);
-            saveLastMenu(items);
+            if (!items.isEmpty()) {
+                saveLastMenu(items);
+            }
             return items;
         } catch (FileNotFoundException e) {
             return loadRawMenu();
