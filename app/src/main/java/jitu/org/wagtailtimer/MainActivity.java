@@ -87,9 +87,9 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
     }
 
     private ArrayList<HashMap<String, String>> toItemMap(ArrayList<MenuItem> items) {
-        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> data = new ArrayList<>();
         for (MenuItem item : items) {
-            HashMap<String, String> datum = new HashMap<String, String>(2);
+            HashMap<String, String> datum = new HashMap<>(2);
             datum.put("title", item.getTitle());
             datum.put("duration", formatTime(item.getDuration()));
             data.add(datum);

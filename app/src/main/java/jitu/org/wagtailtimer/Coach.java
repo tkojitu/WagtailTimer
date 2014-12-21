@@ -8,7 +8,7 @@ public class Coach {
     private MegahonChan megahon;
     private StateChan state = new StateChan(this);
     private TokeiChan tokei = new TokeiChan(this);
-    private ArrayList<MenuItem> items = new ArrayList<MenuItem>();
+    private ArrayList<MenuItem> items = new ArrayList<>();
     private long startedTime;
 
     public Coach(MainActivity activity) {
