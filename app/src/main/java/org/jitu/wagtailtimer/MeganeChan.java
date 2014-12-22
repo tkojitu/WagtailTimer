@@ -1,4 +1,4 @@
-package jitu.org.wagtailtimer;
+package org.jitu.wagtailtimer;
 
 import android.content.Context;
 import android.widget.Toast;

@@ -1,4 +1,4 @@
-package jitu.org.wagtailtimer;
+package org.jitu.wagtailtimer;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

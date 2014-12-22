@@ -1,4 +1,4 @@
-package jitu.org.wagtailtimer;
+package org.jitu.wagtailtimer;
 
 public class MenuItem {
     private String title = "";

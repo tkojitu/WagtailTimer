@@ -1,4 +1,4 @@
-package jitu.org.wagtailtimer;
+package org.jitu.wagtailtimer;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
