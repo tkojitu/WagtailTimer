@@ -140,6 +140,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     public void onDestroy() {
         coach.onDestroy();
+        super.onDestroy();
     }
 
     public String getSoundType() {
