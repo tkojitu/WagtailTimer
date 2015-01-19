@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
@@ -53,7 +55,7 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
 
     private boolean onOpen() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("file/*");
+        intent.setType("*/*");
         try {
             startActivityForResult(intent, REQUEST_ACTION_GET_CONTENT);
         } catch (ActivityNotFoundException e) {
@@ -67,13 +69,21 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         switch (requestCode) {
         case REQUEST_ACTION_GET_CONTENT:
             if (resultCode == RESULT_OK) {
-                String path = data.getData().getPath();
-                coach.onReset(path);
+                onActionGetContent(data.getData());
             }
             break;
         default:
             break;
         }
+    }
+
+    private void onActionGetContent(Uri uri) {
+        final String SAF_PRIMARY = "/document/primary:";
+        String path = uri.getPath();
+        if (path.startsWith(SAF_PRIMARY)) {
+            path = path.replace(SAF_PRIMARY, Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+        }
+        coach.onReset(path);
     }
 
     public boolean showItems(ArrayList<MenuItem> items) {
