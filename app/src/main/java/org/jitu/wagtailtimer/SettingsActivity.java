@@ -32,7 +32,17 @@ public class SettingsActivity extends PreferenceActivity {
 
     private void setupSimplePreferencesScreen() {
         addPreferencesFromResource(R.xml.pref);
+        bindSoundList();
+        bindLanguageList();
+    }
+
+    private void bindSoundList() {
         String key = getString(R.string.key_sound_list);
+        bindPreferenceSummaryToValue(findPreference(key));
+    }
+
+    private void bindLanguageList() {
+        String key = getString(R.string.key_language_list);
         bindPreferenceSummaryToValue(findPreference(key));
     }
 

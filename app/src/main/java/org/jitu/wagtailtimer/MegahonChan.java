@@ -5,8 +5,6 @@ import android.media.ToneGenerator;
 import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 public class MegahonChan implements TextToSpeech.OnInitListener {
     private MainActivity activity;
     private TextToSpeech tts;
@@ -22,7 +20,7 @@ public class MegahonChan implements TextToSpeech.OnInitListener {
             Toast.makeText(activity, "onInit failed", Toast.LENGTH_LONG).show();
             return;
         }
-        int ret = tts.setLanguage(Locale.getDefault());
+        int ret = tts.setLanguage(activity.getLanguageLocale());
         if (ret == TextToSpeech.LANG_MISSING_DATA || ret == TextToSpeech.LANG_NOT_SUPPORTED) {
             Toast.makeText(activity, "setLanguage failed", Toast.LENGTH_LONG).show();
         }

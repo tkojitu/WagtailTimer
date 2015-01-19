@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MainActivity extends Activity implements View.OnLongClickListener {
     private static final int REQUEST_ACTION_GET_CONTENT = 11;
@@ -147,5 +148,28 @@ public class MainActivity extends Activity implements View.OnLongClickListener {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String key = getString(R.string.key_sound_list);
         return prefs.getString(key, "");
+    }
+
+    public Locale getLanguageLocale() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String key = getString(R.string.key_language_list);
+        String value = prefs.getString(key, getString(R.string.lang_default));
+        if (getString(R.string.lang_zh).equals(value)) {
+            return Locale.CHINESE;
+        } else if (getString(R.string.lang_en).equals(value)) {
+            return Locale.ENGLISH;
+        } else if (getString(R.string.lang_fr).equals(value)) {
+            return Locale.FRENCH;
+        } else if (getString(R.string.lang_ge).equals(value)) {
+            return Locale.GERMAN;
+        } else if (getString(R.string.lang_it).equals(value)) {
+            return Locale.ITALIAN;
+        } else if (getString(R.string.lang_ja).equals(value)) {
+            return Locale.JAPANESE;
+        } else if (getString(R.string.lang_ko).equals(value)) {
+            return Locale.KOREAN;
+        } else {
+            return Locale.getDefault();
+        }
     }
 }

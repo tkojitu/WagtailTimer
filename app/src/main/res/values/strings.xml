@@ -18,4 +18,15 @@
     <string name="tone">Tone</string>
     <string name="none">None</string>
 
+    <string name="key_language_list">key_language_list</string>
+    <string name="language">Language</string>
+    <string name="lang_default">Default</string>
+    <string name="lang_zh">Chinese</string>
+    <string name="lang_en">English</string>
+    <string name="lang_fr">French</string>
+    <string name="lang_ge">German</string>
+    <string name="lang_it">Italian</string>
+    <string name="lang_ja">Japanese</string>
+    <string name="lang_ko">Korean</string>
+
 </resources>
